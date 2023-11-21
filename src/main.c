@@ -58,34 +58,6 @@ int check_arg(char *binary_path, int bits)
     return 0;
 }
 
-void affichage(char **tab)
-{
-    int i = 0;
-
-    while (tab[i] != NULL)
-    {
-        if (ft_strlen(tab[i]) > 0)
-            printf("%d = %s\n", i, tab[i]);
-        i++;
-    }
-    return;
-}
-
-void print_list()
-{
-    while (g_all->next)
-    {
-        printf("---------------------\n");
-        printf("|g_all->addr = %016lx\n", g_all->address);
-        printf("|g_all->name = %s\n", g_all->name);
-        printf("|g_all->type = %d\n", g_all->type);
-        printf("|g_all->symbole = %c\n", g_all->symbole);
-        printf("---------------------\n");
-        g_all = g_all->next;
-    }
-    return;
-}
-
 int option(char *str, int argc, int nb_arg)
 {
     if (ft_strncmp("-r", str, ft_strlen("-r")) == 0 && ft_strlen(str) == 2)
@@ -166,16 +138,12 @@ int main(int argc, char **argv)
         {
             int fd = open(argv[nb_arg], O_RDONLY);
             if (fd < 0)
-            {
-                printf("Impossible d'ouvrir le fichier %s\n", argv[nb_arg]);
-                return 1;
-            }
+                exit_error("open failed\n", 1);
             void *mapped = mmap(NULL, 100000000000, PROT_READ, MAP_PRIVATE, fd, 0);
             if (mapped == MAP_FAILED)
             {
-                printf("Erreur lors du mappage du fichier binaire en mémoire\n");
                 close(fd);
-                return 1;
+                exit_error("mmap failed\n", 1);
             }
 
             Elf64_Ehdr *ehdr = (Elf64_Ehdr *)mapped;
@@ -206,22 +174,15 @@ int main(int argc, char **argv)
                         unsigned char symbol_type = symbol_type_and_binding & 0x0F; // les 4 bits de poids faible contiennent le type
                         unsigned char symbol_binding = symbol_type_and_binding >> 4;
                         add_symbol(j, symbol_type, symbol_binding, symtab_str, symtab, type);
-                        // ft_lstadd_back(&g_all, fill_all(symtab[j].st_value, symtab_str + symtab[j].st_name, symbol_type, 0));
                         if (type == TYPE_A)
                         {
                             if (ft_strlen(symtab_str + symtab[j].st_name) > 0)
-                            {
-                                name_tab[count] = symtab_str + symtab[j].st_name;
-                                count++;
-                            }
+                                name_tab[count++] = symtab_str + symtab[j].st_name;
                         }
                         else
                         {
                             if (ft_strlen(symtab_str + symtab[j].st_name) > 0 && symbol_type != 4)
-                            {
-                                name_tab[count] = symtab_str + symtab[j].st_name;
-                                count++;
-                            }
+                                name_tab[count++] = symtab_str + symtab[j].st_name;
                         }
                     }
 
@@ -230,6 +191,7 @@ int main(int argc, char **argv)
             }
             name_tab[count] = NULL;
             tri(name_tab, type);
+            // printf("size tab : %d\n", size_tab(name_tab));
             free_tab(name_tab);
             munmap(mapped, 100000000000);
             close(fd);

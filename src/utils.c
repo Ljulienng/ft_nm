@@ -103,3 +103,9 @@ void free_tab(char **tab)
 	free(tab);
 	return;
 }
+
+int exit_error(char *str, int ret)
+{
+	printf("%s\n", str);
+	return (ret);
+}

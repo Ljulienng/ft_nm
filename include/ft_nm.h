@@ -39,6 +39,7 @@ int ft_strncmp(const char *s1, const char *s2, size_t n);
 int ft_strlen(char *s);
 void ft_lstadd_back(t_all **alst, t_all *new);
 int ft_strlen_without_tiret(char *s);
+int exit_error(char *str, int ret);
 
 extern t_all *g_all;
 #endif
