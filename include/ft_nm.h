@@ -6,7 +6,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include <string.h>
 #include <elf.h>
+#include <sys/stat.h>
+#include <ctype.h>
 
 #define TYPE_R 1
 #define TYPE_A 2
@@ -24,7 +27,7 @@ typedef struct s_all
     struct s_all *next;
 } t_all;
 
-void add_symbol(int j, unsigned char symbol_type, unsigned char symbol_binding, char *symtab_str, Elf64_Sym *symtab, int type);
+void add_symbol(int j, unsigned char symbol_binding, char *symtab_str, Elf64_Sym *symtab, Elf64_Shdr *shdr);
 void print_final_with_r(char **tri_tab);
 void print_final(char **tri_tab, int type);
 char *all_in_min(char *str);
