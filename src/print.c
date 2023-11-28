@@ -63,10 +63,13 @@ void add_symbol(int j, unsigned char symbol_binding, char *symtab_str, Elf64_Sym
 
 void print_symbol(t_all *symbol)
 {
-    if (symbol->address == 0 && symbol->symbole == 'U')
-        printf("                 %c %s\n", symbol->symbole, symbol->name);
+    // Check if the symbol is a weak symbol with a zero address
+    if (symbol->address == 0 && (symbol->symbole == 'w' || symbol->symbole == 'W'))
+        printf("%16c %c %s\n", ' ', symbol->symbole, symbol->name); // Print without address
+    else if (symbol->address == 0 && symbol->symbole == 'U')
+        printf("                 %c %s\n", symbol->symbole, symbol->name); // Undefined symbol without address
     else
-        printf("%016lx %c %s\n", symbol->address, symbol->symbole, symbol->name);
+        printf("%016lx %c %s\n", symbol->address, symbol->symbole, symbol->name); // Print with address
 }
 
 // Add helper functions for readability and to reduce code duplication

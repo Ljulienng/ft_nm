@@ -73,8 +73,8 @@ int is_smaller(char *a, char *b)
     while (b[j] == '_')
         j++;
 
-    if (strcmp(a, "strdup") == 0)
-        printf("a: %s\nb: %s\n", a, b);
+    // if (strcmp(a, "strdup") == 0)
+    //     printf("a: %s\nb: %s\n", a, b);
 
     while (a[i] && b[j])
     {
