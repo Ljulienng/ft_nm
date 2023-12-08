@@ -44,57 +44,67 @@ int check_arg(char *binary_path, int *bits)
 
 int option(char *str, int argc, int nb_arg)
 {
+    // Handle the -r flag (Reverse Sort)
     if (ft_strncmp("-r", str, ft_strlen("-r")) == 0 && ft_strlen(str) == 2)
     {
-        type = TYPE_R;
+        type = TYPE_R; // Set mode to reverse sort
         nb_arg++;
+        // Check if -r is the only argument
         if (argc == 2)
         {
             printf("ft_nm: 'a.out': No such file\n");
-            return (-1);
+            return (-1); // Error if no file specified
         }
     }
+    // Handle the -a flag
     else if (ft_strncmp("-a", str, ft_strlen("-a")) == 0 && ft_strlen(str) == 2)
     {
-        type = TYPE_A;
+        type = TYPE_A; // Set mode specific to -a (functionality not specified)
         nb_arg++;
+        // Check if -a is the only argument
         if (argc == 2)
         {
             printf("ft_nm: 'a.out': No such file\n");
-            return (-1);
+            return (-1); // Error if no file specified
         }
     }
+    // Handle the -p flag (No Sort)
     else if (ft_strncmp("-p", str, ft_strlen("-p")) == 0 && ft_strlen(str) == 2)
     {
-        type = TYPE_P;
+        type = TYPE_P; // Set mode to no sorting
         nb_arg++;
+        // Check if -p is the only argument
         if (argc == 2)
         {
             printf("ft_nm: 'a.out': No such file\n");
-            return (-1);
+            return (-1); // Error if no file specified
         }
     }
+    // Handle the -u flag (Undefined Symbols)
     else if (ft_strncmp("-u", str, ft_strlen("-u")) == 0 && ft_strlen(str) == 2)
     {
-        type = TYPE_U;
+        type = TYPE_U; // Set mode to display undefined symbols
         nb_arg++;
+        // Check if -u is the only argument
         if (argc == 2)
         {
             printf("ft_nm: 'a.out': No such file\n");
-            return (-1);
+            return (-1); // Error if no file specified
         }
     }
+    // Handle the -g flag (Global Symbols)
     else if (ft_strncmp("-g", str, ft_strlen("-g")) == 0 && ft_strlen(str) == 2)
     {
-        type = TYPE_G;
+        type = TYPE_G; // Set mode to display global symbols
         nb_arg++;
+        // Check if -g is the only argument
         if (argc == 2)
         {
             printf("ft_nm: 'a.out': No such file\n");
-            return (-1);
+            return (-1); // Error if no file specified
         }
     }
-    return nb_arg;
+    return nb_arg; // Return the number of arguments processed
 }
 
 int main(int argc, char **argv)

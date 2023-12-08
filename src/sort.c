@@ -1,67 +1,12 @@
 #include "ft_nm.h"
 #include <string.h>
 
-// char *all_in_min(char *str)
-// {
-//     int i = 0;
-//     // int lengh = ft_strlen(str);
-//     char *tab = malloc(ft_strlen(str) + 1);
-
-//     while (str[i])
-//     {
-//         if (str[i] >= 'A' && str[i] <= 'Z')
-//             tab[i] = str[i] + 32;
-//         else
-//             tab[i] = str[i];
-//         i++;
-//     }
-//     tab[i] = '\0';
-//     return tab;
-// }
-
-// static int free_var(char *str_min, char *tmp_min, int return_value)
-// {
-//     free(str_min);
-//     free(tmp_min);
-//     return return_value;
-// }
-
-// int is_smaller(char *tmp, char *tab_str)
-// {
-//     char *str_min = all_in_min(tab_str);
-//     char *tmp_min = all_in_min(tmp);
-//     int i = 0;
-//     int j = 0;
-
-//     while (tmp_min[i] == '_')
-//         i++;
-//     while (str_min[j] == '_')
-//         j++;
-
-//     while (tmp_min[i] && str_min[j])
-//     {
-//         if (tmp_min[i] == '_' && str_min[j] != '_' && i == j)
-//             return free_var(str_min, tmp_min, 1);
-//         if (tmp_min[i] != '_' && str_min[j] == '_' && i == j)
-//             return free_var(str_min, tmp_min, 0);
-//         if (tmp_min[i] < str_min[j])
-//             return free_var(str_min, tmp_min, 0);
-//         if (tmp_min[i] > str_min[j])
-//             return free_var(str_min, tmp_min, 1);
-//         j++;
-//         i++;
-//     }
-//     if (ft_strlen_without_tiret(tmp_min) == ft_strlen_without_tiret(str_min))
-//     {
-//         if (tmp_min[0] == '_' && str_min[0] != '_')
-//             return free_var(str_min, tmp_min, 0);
-//         if (tmp_min[0] != '_' && str_min[0] == '_')
-//             return free_var(str_min, tmp_min, 1);
-//     }
-//     if (ft_strlen(str_min) < ft_strlen(tmp_min))
-//         return free_var(str_min, tmp_min, 1);
-//     return free_var(str_min, tmp_min, 0);
-// }
+int is_a_special_character(char c)
+{
+    // Add more special characters as needed
+    const char *special_characters = "._@";
+    return strchr(special_characters, c) != NULL;
+}
 
 int is_smaller(char *a, char *b)
 {
@@ -73,21 +18,27 @@ int is_smaller(char *a, char *b)
     while (b[j] == '_')
         j++;
 
-    // if (strcmp(a, "strdup") == 0)
+    // if (strcmp(a, "free_all") == 0)
     //     printf("a: %s\nb: %s\n", a, b);
 
     while (a[i] && b[j])
     {
-
-        while (a[i] == '_')
+        while (is_a_special_character(a[i]) && a[i])
             i++;
-        while (b[j] == '_')
+        while (is_a_special_character(b[j]) && b[j])
             j++;
-        int char_a = tolower((unsigned char)a[i]);
-        int char_b = tolower((unsigned char)b[j]);
+
+        int char_a = tolower((int)a[i]);
+        int char_b = tolower((int)b[j]);
 
         if (char_a != char_b)
         {
+            // if (strcmp(a, "free_all") == 0)
+            //     printf("char_a: %c\nchar_b: %c\n", char_a, char_b);
+            // if (strcmp(a, "_ZN11__sanitizer18ReportErrorSummaryEPKcRKNS_11AddressInfoES1_.part.0") == 0)
+            //     printf("a: %s\nb: %s\n, char_a %c, char_b %c, i %d, j%d\n", a, b, a[i], b[j], i, j);
+            // if (b[j] == '\0' || a[i] == '\0')
+            //     printf("char_b is null\n");
             return char_a < char_b;
         }
 
@@ -97,7 +48,14 @@ int is_smaller(char *a, char *b)
             j++;
     }
 
+    if (a[i] == '\0' && b[j] == '\0')
+        return ft_strlen(a) > ft_strlen(b);
+    // printf("DIAJDIEADJI = a: %s\nb: %s\n", a, b);
+
     // Handle cases where one string is a prefix of the other
+    if (a[i] == '\0' && b[j] == '\0')
+        return 0;
+
     return a[i] == '\0' && b[j] != '\0';
 }
 // QuickSort utility functions
@@ -113,6 +71,9 @@ void quickSort(char *arr[], int low, int high)
     {
         if (is_smaller(arr[j], pivot))
         {
+            // if (strcmp(arr[j], "free@GLIBC_2.2.5") == 0)
+            //     printf("arr[j]: %s\npivot: %s\n", arr[j], pivot);
+
             char *temp = arr[j];
             arr[j] = arr[i];
             arr[i] = temp;

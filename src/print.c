@@ -24,23 +24,36 @@ void add_symbol(int j, unsigned char symbol_binding, char *symtab_str, Elf64_Sym
             Elf64_Shdr section = shdr[symtab[j].st_shndx];
             if (section.sh_type == SHT_NOBITS)
             {
-                // Uninitialized data (bss segment)
-                symbol_char = 'B';
+                symbol_char = 'B'; // Uninitialized data (bss segment)
             }
             else if (section.sh_flags & SHF_WRITE)
             {
-                // Initialized data segment
-                symbol_char = 'D';
+                symbol_char = 'D'; // Initialized data segment
             }
             else if (section.sh_flags & SHF_EXECINSTR)
             {
-                // Executable (text) segment
-                symbol_char = 'T';
+                symbol_char = 'T'; // Executable (text) segment
             }
             else
             {
-                // Read-only data segment
-                symbol_char = 'R';
+                symbol_char = 'R'; // Read-only data segment
+            }
+        }
+
+        // Handle weak symbols
+        if (symbol_binding == STB_WEAK)
+        {
+            if (ELF64_ST_TYPE(symtab[j].st_info) == STT_OBJECT)
+            {
+                symbol_char = 'v'; // Weak object symbol
+            }
+            else if (symtab[j].st_shndx == SHN_UNDEF)
+            {
+                symbol_char = 'w'; // Weak symbol, undefined
+            }
+            else
+            {
+                symbol_char = 'W'; // Weak symbol, defined
             }
         }
 
@@ -48,12 +61,6 @@ void add_symbol(int j, unsigned char symbol_binding, char *symtab_str, Elf64_Sym
         if (symbol_binding == STB_LOCAL && symbol_char != '?')
         {
             symbol_char = tolower(symbol_char);
-        }
-
-        // Handle weak symbols
-        if (symbol_binding == STB_WEAK)
-        {
-            symbol_char = (symtab[j].st_shndx == SHN_UNDEF) ? 'w' : 'W';
         }
 
         // Add symbol to the list
@@ -64,7 +71,7 @@ void add_symbol(int j, unsigned char symbol_binding, char *symtab_str, Elf64_Sym
 void print_symbol(t_all *symbol)
 {
     // Check if the symbol is a weak symbol with a zero address
-    if (symbol->address == 0 && (symbol->symbole == 'w' || symbol->symbole == 'W'))
+    if (symbol->address == 0 && (symbol->symbole == 'w' || symbol->symbole == 'W' || symbol->symbole == 'v'))
         printf("%16c %c %s\n", ' ', symbol->symbole, symbol->name); // Print without address
     else if (symbol->address == 0 && symbol->symbole == 'U')
         printf("                 %c %s\n", symbol->symbole, symbol->name); // Undefined symbol without address
