@@ -131,9 +131,9 @@ int main(int argc, char **argv)
         else
         {
             int fd = open(argv[nb_arg], O_RDONLY);
+            struct stat statbuf;
             if (fd < 0)
                 exit_error("open failed\n", 1);
-            struct stat statbuf;
             if (fstat(fd, &statbuf) < 0)
             {
                 close(fd);
@@ -148,67 +148,44 @@ int main(int argc, char **argv)
                 exit_error("mmap failed\n", 1);
             }
 
-            Elf64_Ehdr *ehdr = (Elf64_Ehdr *)mapped;
-            Elf64_Shdr *shdr = (Elf64_Shdr *)(mapped + ehdr->e_shoff);
-            // Elf64_Shdr *shstrtab = &shdr[ehdr->e_shstrndx];
-            // // char *strtab = (char *)(mapped + shstrtab->sh_offset);
-            Elf64_Sym *symtab = NULL;
-            char *symtab_str = NULL;
-            int i, symtab_count;
+            // Handle 64-bit ELF file
+
             if ((argc > 2 && type == 0) || (argc > 3 && type > 0))
             {
                 printf("\n");
                 printf("%s:\n", argv[nb_arg]);
             }
-            for (i = 0; i < ehdr->e_shnum; i++)
+            if (bits == 64)
             {
-                if (shdr[i].sh_type == SHT_SYMTAB)
+                Elf64_Ehdr *ehdr = (Elf64_Ehdr *)mapped;
+                Elf64_Shdr *shdr = (Elf64_Shdr *)(mapped + ehdr->e_shoff);
+                if (process_64(ehdr, shdr, mapped, type, &name_tab, &count) == 1)
                 {
-                    symtab = (Elf64_Sym *)(mapped + shdr[i].sh_offset);
-                    if (!symtab)
-                    {
-                        fprintf(stderr, "Invalid symtab pointer\n");
-                        break;
-                    }
-
-                    symtab_str = (char *)(mapped + shdr[shdr[i].sh_link].sh_offset);
-                    if (!symtab_str)
-                    {
-                        fprintf(stderr, "Invalid symtab_str pointer\n");
-                        break;
-                    }
-                    symtab_count = shdr[i].sh_size / sizeof(Elf64_Sym);
-                    // // char *strtab = (char *)(mapped + shstrtab->sh_offset);
-                    name_tab = (char **)malloc(sizeof(char *) * (symtab_count));
-                    if (name_tab == NULL)
-                    {
-                        perror("Failed to allocate memory for name_tab");
-                        munmap(mapped, statbuf.st_size);
-                        close(fd);
-                        return 1;
-                    }
-                    for (int j = 0; j < symtab_count; j++)
-                    {
-                        unsigned char symbol_type_and_binding = symtab[j].st_info;
-                        unsigned char symbol_type = symbol_type_and_binding & 0x0F; // les 4 bits de poids faible contiennent le type
-                        unsigned char symbol_binding = symbol_type_and_binding >> 4;
-                        add_symbol(j, symbol_binding, symtab_str, symtab, shdr);
-                        if ((type == TYPE_A && ft_strlen(symtab_str + symtab[j].st_name) > 0) ||
-                            (type != TYPE_A && ft_strlen(symtab_str + symtab[j].st_name) > 0 && symbol_type != 4))
-                        {
-                            name_tab[count++] = symtab_str + symtab[j].st_name;
-                        }
-                    }
-
-                    break;
+                    perror("Failed to allocate memory for name_tab");
+                    munmap(mapped, statbuf.st_size);
+                    close(fd);
+                    return 1;
                 }
             }
+            else
+            {
+                Elf32_Ehdr *ehdr = (Elf32_Ehdr *)mapped;
+                Elf32_Shdr *shdr = (Elf32_Shdr *)(mapped + ehdr->e_shoff);
+                if (process_32(ehdr, shdr, mapped, type, &name_tab, &count) == 1)
+                {
+                    perror("Failed to allocate memory for name_tab");
+                    munmap(mapped, statbuf.st_size);
+                    close(fd);
+                    return 1;
+                }
+            }
+
             if (count > 0)
                 name_tab[count] = NULL;
             else
                 name_tab = NULL;
             if (name_tab != NULL)
-                tri(name_tab, type);
+                tri(name_tab, type, bits);
             else
                 printf("ft_nm: %s: no symbols\n", argv[nb_arg]);
             // printf("size tab : %d\n", size_tab(name_tab));

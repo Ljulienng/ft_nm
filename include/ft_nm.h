@@ -27,12 +27,17 @@ typedef struct s_all
     struct s_all *next;
 } t_all;
 
+int process_64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *mapped, int type, char ***name_tab, int *count);
+int process_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *mapped, int type, char ***name_tab, int *count);
+
+void print_symbol_32(t_all *symbol);
+void add_symbol_32(int j, unsigned char symbol_binding, char *symtab_str, Elf32_Sym *symtab, Elf32_Shdr *shdr);
 void add_symbol(int j, unsigned char symbol_binding, char *symtab_str, Elf64_Sym *symtab, Elf64_Shdr *shdr);
-void print_final_with_r(char **tri_tab);
-void print_final(char **tri_tab, int type);
+void print_final_with_r(char **tri_tab, int bits);
+void print_final(char **tri_tab, int type, int bits);
 char *all_in_min(char *str);
 int is_smaller(char *tmp, char *tab_str);
-void tri(char **name_tab, int type);
+void tri(char **name_tab, int type, int bits);
 void free_tab(char **tab);
 void free_all();
 int size_tab(char **name_tab);

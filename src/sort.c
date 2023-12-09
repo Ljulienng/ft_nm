@@ -18,9 +18,6 @@ int is_smaller(char *a, char *b)
     while (b[j] == '_')
         j++;
 
-    // if (strcmp(a, "free_all") == 0)
-    //     printf("a: %s\nb: %s\n", a, b);
-
     while (a[i] && b[j])
     {
         while (is_a_special_character(a[i]) && a[i])
@@ -33,12 +30,7 @@ int is_smaller(char *a, char *b)
 
         if (char_a != char_b)
         {
-            // if (strcmp(a, "free_all") == 0)
-            //     printf("char_a: %c\nchar_b: %c\n", char_a, char_b);
-            // if (strcmp(a, "_ZN11__sanitizer18ReportErrorSummaryEPKcRKNS_11AddressInfoES1_.part.0") == 0)
-            //     printf("a: %s\nb: %s\n, char_a %c, char_b %c, i %d, j%d\n", a, b, a[i], b[j], i, j);
-            // if (b[j] == '\0' || a[i] == '\0')
-            //     printf("char_b is null\n");
+
             return char_a < char_b;
         }
 
@@ -89,13 +81,13 @@ void quickSort(char *arr[], int low, int high)
     quickSort(arr, i + 1, high);
 }
 
-void tri(char **name_tab, int type)
+void tri(char **name_tab, int type, int bits)
 {
     int n = size_tab(name_tab); // Calculate size once
 
     if (type == TYPE_P)
     {
-        print_final(name_tab, type);
+        print_final(name_tab, type, bits);
         return;
     }
 
@@ -103,10 +95,10 @@ void tri(char **name_tab, int type)
 
     if (type == TYPE_R)
     {
-        print_final_with_r(name_tab); // Print in reverse order if needed
+        print_final_with_r(name_tab, bits); // Print in reverse order if needed
     }
     else
     {
-        print_final(name_tab, type);
+        print_final(name_tab, type, bits);
     }
 }

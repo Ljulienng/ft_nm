@@ -13,8 +13,10 @@ CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR) -g
 NAME = ft_nm
 SRC_FILES = main.c \
 			print.c \
+			print32.c \
 			utils.c \
-			sort.c
+			sort.c \
+			process.c
 
 # List of include directories
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))

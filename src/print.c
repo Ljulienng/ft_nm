@@ -96,7 +96,7 @@ int is_correct_type(t_all *symbol, int type, char *name)
     return is_correct_symbol(symbol, name);
 }
 
-void print_final_with_r(char **tri_tab)
+void print_final_with_r(char **tri_tab, int bits)
 {
     t_all *tmp = g_all;
     int i = size_tab(tri_tab) - 1;
@@ -107,7 +107,10 @@ void print_final_with_r(char **tri_tab)
         {
             if (is_correct_symbol(tmp, tri_tab[i]))
             {
-                print_symbol(tmp);
+                if (bits == 32)
+                    print_symbol_32(tmp);
+                else
+                    print_symbol(tmp);
                 tmp->write = 1;
             }
             tmp = tmp->next;
@@ -117,7 +120,7 @@ void print_final_with_r(char **tri_tab)
     return;
 }
 
-void print_final(char **tri_tab, int type)
+void print_final(char **tri_tab, int type, int bits)
 {
     t_all *tmp = g_all;
     int i = 0;
@@ -128,7 +131,10 @@ void print_final(char **tri_tab, int type)
         {
             if (is_correct_type(tmp, type, tri_tab[i]))
             {
-                print_symbol(tmp);
+                if (bits == 32)
+                    print_symbol_32(tmp);
+                else
+                    print_symbol(tmp);
                 tmp->write = 1;
             }
             tmp = tmp->next;
