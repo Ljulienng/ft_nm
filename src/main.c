@@ -175,6 +175,7 @@ int main(int argc, char **argv)
                 {
                     perror("Failed to allocate memory for name_tab");
                     munmap(mapped, statbuf.st_size);
+                    free_all();
                     close(fd);
                     return 1;
                 }
@@ -195,5 +196,6 @@ int main(int argc, char **argv)
         }
         nb_arg++;
     }
+    free_all();
     return 0;
 }

@@ -82,11 +82,33 @@ void print_symbol(t_all *symbol)
 // Add helper functions for readability and to reduce code duplication
 int is_correct_symbol(t_all *symbol, char *name)
 {
-    return (ft_strlen(name) == ft_strlen(symbol->name)) &&
-           ft_strncmp(name, symbol->name, ft_strlen(name)) == 0 &&
-           symbol->write != 1;
-}
+    // First, ensure that both 'name' and 'symbol->name' are not NULL
+    if (symbol == NULL || symbol->name == NULL || name == NULL)
+    {
+        return 0; // Handle error or return false
+    }
+    // Check if the lengths of 'name' and 'symbol->name' are equal
+    size_t name_len = ft_strlen(name);
+    if (name_len != (size_t)ft_strlen(symbol->name))
+    {
+        return 0; // Return false if lengths are not equal
+    }
 
+    // Compare the names
+    if (ft_strncmp(name, symbol->name, name_len) != 0)
+    {
+        return 0; // Return false if names are not equal
+    }
+
+    // Check if the symbol has already been written
+    if (symbol->write != 1)
+    {
+        return 1; // Return true if symbol hasn't been written yet
+    }
+
+    // If none of the conditions match, return false
+    return 0;
+}
 int is_correct_type(t_all *symbol, int type, char *name)
 {
     if (type == TYPE_U)
