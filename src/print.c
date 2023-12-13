@@ -45,7 +45,14 @@ void add_symbol(int j, unsigned char symbol_binding, char *symtab_str, Elf64_Sym
         {
             if (ELF64_ST_TYPE(symtab[j].st_info) == STT_OBJECT)
             {
-                symbol_char = 'v'; // Weak object symbol
+                if (symtab[j].st_shndx == SHN_UNDEF)
+                {
+                    symbol_char = 'v'; // Weak object symbol, undefined
+                }
+                else
+                {
+                    symbol_char = 'V'; // Weak object symbol, defined
+                }
             }
             else if (symtab[j].st_shndx == SHN_UNDEF)
             {
